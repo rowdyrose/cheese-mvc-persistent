@@ -57,23 +57,26 @@ public class MenuController {
     @RequestMapping(value="add-item/{menuId}", method = RequestMethod.GET)
     public String addItem(Model model, @PathVariable int menuId) {
         Menu menu = menuDao.findOne(menuId);
+        Iterable<Cheese> allCheese = cheeseDao.findAll();
 
-        AddMenuItemForm addMenuItemForm;
-        addMenuItemForm = new AddMenuItemForm(menu, cheeseDao.findAll());
+        AddMenuItemForm menuForm = new AddMenuItemForm(menu, allCheese);
 
         model.addAttribute("title", "Add item to menu: " + menu.getName());
-        model.addAttribute("form", addMenuItemForm);
+        model.addAttribute("form", menuForm );
 
         return "menu/add-item";
     }
 
-    @RequestMapping(value="add-item", method = RequestMethod.POST)
-    public String addItem(Model model, @ModelAttribute @Valid AddMenuItemForm addMenuItemForm, Errors errors,@RequestParam int menuId, @RequestParam int cheeseId) {
-        if (errors.hasErrors()) {
-            return "menu/add-item";
-        }
+    @RequestMapping(value="add-item/{menuId}", method = RequestMethod.POST)
+    public String addItem(Model model, @ModelAttribute @Valid AddMenuItemForm newMenu, Errors errors,@RequestParam int menuId, @RequestParam int cheeseId) {
 
         Menu menu = menuDao.findOne(menuId);
+
+        if (errors.hasErrors()) {
+            return "menu/add-item/" + menu.getId();
+        }
+
+
         Cheese cheese = cheeseDao.findOne(cheeseId);
         menu.addItem(cheese);
         menuDao.save(menu);

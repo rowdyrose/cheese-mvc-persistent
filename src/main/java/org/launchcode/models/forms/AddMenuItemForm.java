@@ -33,8 +33,6 @@ public class AddMenuItemForm {
         return menuId;
     }
 
-    public int getCheeseId() {
-        return cheeseId;
-    }
+    public int getCheeseId() { return cheeseId;}
 }
 
